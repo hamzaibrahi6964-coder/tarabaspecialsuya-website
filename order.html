@@ -47,12 +47,13 @@
 <script>
 
 document.getElementById("orderForm").addEventListener("submit", function(e){
+
 e.preventDefault();
 
-let order = "TS-" + Math.floor(Math.random()*10000);
+let orderNumber = "TS-" + Math.floor(1000 + Math.random() * 9000);
 
 document.getElementById("result").innerHTML =
-"Order received. Verification Number: " + order;
+"<strong>Order Confirmed!</strong><br>Order Number: " + orderNumber;
 
 });
 
