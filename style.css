@@ -157,4 +157,16 @@
             .about-content, .contact-container { grid-template-columns: 1fr; }
             .features-bar { flex-direction: column; align-items: center; }
         }
-    
+.whatsapp-float{
+position: fixed;
+bottom: 20px;
+right: 20px;
+background: #25D366;
+color: white;
+padding: 14px 20px;
+border-radius: 30px;
+font-size: 14px;
+text-decoration: none;
+font-weight: bold;
+box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
