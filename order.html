@@ -72,10 +72,21 @@ document.getElementById("orderForm").addEventListener("submit", function(e){
 
 e.preventDefault();
 
-let orderNumber = "TS-" + Math.floor(1000 + Math.random() * 9000);
+let name = document.getElementById("name").value;
+let phone = document.getElementById("phone").value;
+let food = document.getElementById("food").value;
+let quantity = document.getElementById("quantity").value;
 
-document.getElementById("result").innerHTML =
-"<strong>Order Confirmed!</strong><br>Order Number: " + orderNumber;
+let orderNumber = Math.floor(Math.random()*10000);
+
+let message = "New Order%0A"+
+"Order No: "+orderNumber+"%0A"+
+"Name: "+name+"%0A"+
+"Phone: "+phone+"%0A"+
+"Food: "+food+"%0A"+
+"Quantity: "+quantity;
+
+window.open("https://wa.me/2348069233181?text="+message);
 
 });
 
