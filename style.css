@@ -290,3 +290,41 @@ font-size:16px;
 border-radius:6px;
 cursor:pointer;
 }
+
+.order-section{
+max-width:500px;
+margin:80px auto;
+background:#111;
+padding:30px;
+border-radius:10px;
+color:white;
+}
+
+.order-section h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+.order-section input,
+.order-section select{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:none;
+border-radius:5px;
+}
+
+.order-section button{
+width:100%;
+padding:12px;
+background:#ff3c3c;
+border:none;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.order-section button:hover{
+background:#ff6a00;
+}
