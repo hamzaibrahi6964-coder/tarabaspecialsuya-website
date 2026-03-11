@@ -35,29 +35,34 @@ Order on WhatsApp
 
 </div>
 
-<section class="section">
-<h2>Place Order</h2>
+<section class="order-section">
+
+<h2>Place Your Order</h2>
 
 <form id="orderForm">
 
-<label>Name</label><br>
-<input type="text" id="name"><br><br>
+<label>Your Name</label>
+<input type="text" id="name" required>
 
-<label>Phone</label><br>
-<input type="text" id="phone"><br><br>
+<label>Phone Number</label>
+<input type="text" id="phone" required>
 
-<label>Food</label><br>
+<label>Select Item</label>
 <select id="food">
 <option>Beef Suya</option>
 <option>Chicken Suya</option>
+<option>Kebab</option>
 <option>Kilishi</option>
-</select><br><br>
+</select>
 
-<button class="btn-primary">Submit Order</button>
+<label>Quantity</label>
+<input type="number" id="quantity" min="1" value="1">
+
+<button type="submit" class="btn-primary">Place Order</button>
 
 </form>
 
-<p id="result"></p>
+<p id="orderMessage"></p>
 
 </section>
 
