@@ -328,3 +328,12 @@ cursor:pointer;
 .order-section button:hover{
 background:#ff6a00;
 }
+
+.success{
+text-align:center;
+padding:100px;
+}
+
+.success h2{
+color:green;
+}
