@@ -8,6 +8,8 @@
 
 <body>
 
+<div class="form-container">
+
 <h2>Admin Login</h2>
 
 <input type="text" id="username" placeholder="Username">
@@ -16,27 +18,9 @@
 
 <button onclick="login()">Login</button>
 
-<script>
+<a href="staff-signup.html" class="form-link">Create Staff Account</a>
 
-function login(){
-
-let user = document.getElementById("username").value
-let pass = document.getElementById("password").value
-
-if(user === "admin" && pass === "12345"){
-
-localStorage.setItem("admin","true")
-window.location.href="dashboard.html"
-
-}else{
-
-alert("Access denied")
-
-}
-
-}
-
-</script>
+</div>
 
 </body>
 
