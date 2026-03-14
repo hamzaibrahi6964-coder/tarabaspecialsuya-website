@@ -8,33 +8,15 @@
 
 <body>
 
-<h2>Enter Verification Code</h2>
+<div class="form-container">
 
-<input type="text" id="code">
+<h2>Verify Code</h2>
+
+<input type="text" id="code" placeholder="Enter Verification Code">
 
 <button onclick="verify()">Verify</button>
 
-<script>
-
-function verify(){
-
-let entered = document.getElementById("code").value
-let saved = localStorage.getItem("verificationCode")
-
-if(entered === saved){
-
-localStorage.setItem("admin","true")
-window.location.href="dashboard.html"
-
-}else{
-
-alert("Wrong code")
-
-}
-
-}
-
-</script>
+</div>
 
 </body>
 
