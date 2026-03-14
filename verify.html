@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Verify Code</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h2>Enter Verification Code</h2>
+
+<input type="text" id="code">
+
+<button onclick="verify()">Verify</button>
+
+<script>
+
+function verify(){
+
+let entered = document.getElementById("code").value
+let saved = localStorage.getItem("verificationCode")
+
+if(entered === saved){
+
+localStorage.setItem("admin","true")
+window.location.href="dashboard.html"
+
+}else{
+
+alert("Wrong code")
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
