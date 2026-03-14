@@ -66,7 +66,8 @@ Order on WhatsApp
 <label>Address</label>
 <input type="text" id="address">
 
-<button type="button" onclick="payNow()">Pay & Place Order</button>
+<button onclick="placeOrder()">Place Order</button>
+
 
 </form>
 
@@ -204,6 +205,53 @@ alert("Order sent successfully")
 }
 
 </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const supabaseClient = supabase.createClient(
+"https://kjbebnahxuupolrcmlwv.supabase.co",
+"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+)
+
+async function placeOrder(){
+
+let name = document.getElementById("name").value
+let phone = document.getElementById("phone").value
+let food = document.getElementById("food").value
+let quantity = document.getElementById("quantity").value
+let location = document.getElementById("location").value
+
+const { data, error } = await supabaseClient
+.from("orders")
+.insert([
+{
+name: name,
+phone: phone,
+food: food,
+quantity: quantity,
+location: location
+}
+])
+
+if(error){
+alert("Order failed: " + error.message)
+return
+}
+
+alert("Order placed successfully!")
+
+document.getElementById("name").value=""
+document.getElementById("phone").value=""
+document.getElementById("food").value=""
+document.getElementById("quantity").value=""
+document.getElementById("location").value=""
+
+}
+
+</script>
+
 
 </body>
 </html>
