@@ -43,10 +43,14 @@ password: password
 
 if(error){
 alert(error.message)
-}else{
-alert("Login successful")
-window.location.href="dashboard.html"
+return
 }
+
+alert("Login successful")
+
+setTimeout(function(){
+window.location.href = "./dashboard.html"
+},1000)
 
 }
 
