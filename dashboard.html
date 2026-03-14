@@ -1,11 +1,86 @@
-<h1>Restaurant Dashboard</h1>
+<!DOCTYPE html>
+<html>
 
-<div id="orders"></div>
+<head>
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<h1>Taraba Special Suya Orders</h1>
+
+<button onclick="logout()">Logout</button>
+
+<div id="orders-container">
+
+<p>Loading orders...</p>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
 
-if(localStorage.getItem("admin") !== "true"){
-window.location.href="admin-login.html"
+const supabaseClient = supabase.createClient(
+"https://kjbebnahxuupolrcmlwv.supabase.co",
+"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+)
+
+async function loadOrders(){
+
+const { data, error } = await supabaseClient
+.from("orders")
+.select("*")
+.order("id", { ascending:false })
+
+if(error){
+console.log(error)
+return
 }
 
+let container = document.getElementById("orders-container")
+
+container.innerHTML = ""
+
+data.forEach(order => {
+
+container.innerHTML += `
+<div class="order-card">
+
+<h3>${order.name}</h3>
+
+<p>Phone: ${order.phone}</p>
+
+<p>Food: ${order.food}</p>
+
+<p>Quantity: ${order.quantity}</p>
+
+<p>Location: ${order.location}</p>
+
+</div>
+`
+
+})
+
+}
+
+async function logout(){
+
+await supabaseClient.auth.signOut()
+
+window.location.href = "admin-login.html"
+
+}
+
+loadOrders()
+
 </script>
+
+</body>
+
+</html>
