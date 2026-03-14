@@ -176,5 +176,34 @@ handler.openIframe();
 
 </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const supabase = supabase.createClient(
+'https://YOUR_PROJECT_ID.supabase.co',
+'YOUR_PUBLIC_ANON_KEY'
+)
+
+async function placeOrder(){
+
+let name = document.getElementById("name").value
+let phone = document.getElementById("phone").value
+let food = document.getElementById("food").value
+let quantity = document.getElementById("quantity").value
+let address = document.getElementById("address").value
+
+const { data, error } = await supabase
+.from('orders')
+.insert([
+{ name, phone, food, quantity, address, payment:"paid" }
+])
+
+alert("Order sent successfully")
+
+}
+
+</script>
+
 </body>
 </html>
