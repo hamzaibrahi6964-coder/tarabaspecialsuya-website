@@ -19,11 +19,43 @@
 
 <input type="text" id="phone" placeholder="Phone Number">
 
-<button onclick="sendCode()">Send Verification Code</button>
+<input type="password" id="password" placeholder="Create Password">
+  
+<button onclick="signup()">Create Staff Account</button>
 
 <a href="admin-login.html" class="form-link">Back to Login</a>
 
 </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const supabaseClient = supabase.createClient(
+"YOUR_PROJECT_URL",
+"YOUR_PUBLIC_ANON_KEY"
+)
+
+async function signup(){
+
+let email = document.getElementById("email").value
+let password = document.getElementById("password").value
+
+const { data, error } = await supabaseClient.auth.signUp({
+email: email,
+password: password
+})
+
+if(error){
+alert(error.message)
+}else{
+alert("Signup successful. You can now login.")
+window.location.href="admin-login.html"
+}
+
+}
+
+</script>
 
 </body>
 </html>
