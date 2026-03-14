@@ -21,25 +21,9 @@
 
 <button onclick="sendCode()">Send Verification Code</button>
 
+<a href="admin-login.html" class="form-link">Back to Login</a>
+
 </div>
-
-<script>
-
-function sendCode(){
-
-let phone = document.getElementById("phone").value
-
-let code = Math.floor(100000 + Math.random() * 900000)
-
-localStorage.setItem("verificationCode", code)
-
-alert("Verification Code: " + code)
-
-window.location.href="verify.html"
-
-}
-
-</script>
 
 </body>
 </html>
