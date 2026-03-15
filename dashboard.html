@@ -35,6 +35,21 @@ const supabaseClient = supabase.createClient(
 
 async function loadOrders(){
 
+  supabaseClient
+.channel('orders-channel')
+.on(
+'postgres_changes',
+{ event: 'INSERT', schema: 'public', table: 'orders' },
+(payload) => {
+
+alert("🔔 New Order Received!")
+
+loadOrders()
+
+}
+)
+.subscribe()
+  
 const { data, error } = await supabaseClient
 .from("orders")
 .select("*")
