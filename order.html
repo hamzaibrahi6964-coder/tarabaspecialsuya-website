@@ -60,7 +60,7 @@ Taraba <span>Special Suya</span>
 </form>
 
 </section>
-
+  
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
@@ -78,7 +78,6 @@ let name = document.getElementById("name").value
 let phone = document.getElementById("phone").value
 let food = document.getElementById("food").value
 let quantity = document.getElementById("quantity").value
-let delivery = document.getElementById("delivery").value
 let address = document.getElementById("address").value
 
 let orderNumber = Math.floor(Math.random()*9000)+1000
@@ -87,17 +86,18 @@ const { error } = await supabaseClient
 .from("orders")
 .insert([
 {
-order_no:orderNumber,
-name:name,
-phone:phone,
-food:food,
-quantity:quantity,
-location:address
+order_no: orderNumber,
+name: name,
+phone: phone,
+food: food,
+quantity: quantity,
+address: address,
+payment: "pending"
 }
 ])
 
 if(error){
-alert("Order failed")
+alert(error.message)
 return
 }
 
@@ -112,13 +112,9 @@ window.location.href="order-success.html"
 
 })
 
-function openMenu(){
-document.getElementById("mobileMenu").style.right="0"
-}
+</script>
 
-function closeMenu(){
-document.getElementById("mobileMenu").style.right="-260px"
-}
+</script>
 
 </script>
 
