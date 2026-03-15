@@ -1,38 +1,27 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <title>Order</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <nav>
-
 <a href="index.html" class="logo">
 Taraba <span>Special Suya</span>
 </a>
 
-<a href="https://wa.me/2348069233181" class="cta-btn">
-Order on WhatsApp
-</a>
-
-<div class="menu-icon" onclick="openMenu()">
-☰
-</div>
-
+<div class="menu-icon" onclick="openMenu()">☰</div>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
-
 <span onclick="closeMenu()" class="close-menu">✕</span>
-
 <a href="index.html">Home</a>
 <a href="menu.html">Menu</a>
 <a href="order.html">Order</a>
 <a href="gallery.html">Gallery</a>
 <a href="contact.html">Contact</a>
-
 </div>
 
 <section class="order-section">
@@ -66,147 +55,13 @@ Order on WhatsApp
 <label>Address</label>
 <input type="text" id="address">
 
-<button onclick="placeOrder()">Place Order</button>
-
+<button type="submit">Place Order</button>
 
 </form>
 
-<p id="orderMessage"></p>
-
 </section>
 
-
-<script>
-
-document.getElementById("orderForm").addEventListener("submit", function(e){
-
-e.preventDefault();
-
-let name = document.getElementById("name").value;
-let phone = document.getElementById("phone").value;
-let food = document.getElementById("food").value;
-let quantity = document.getElementById("quantity").value;
-
-let orderNumber = Math.floor(Math.random()*10000);
-
-let message = "New Order%0A"+
-"Order No: "+orderNumber+"%0A"+
-"Name: "+name+"%0A"+
-"Phone: "+phone+"%0A"+
-"Food: "+food+"%0A"+
-"Quantity: "+quantity;
-
-window.open("https://wa.me/2348069233181?text="+message);
-
-});
-
-</script>
-  <script>
-
-function openMenu(){
-document.getElementById("mobileMenu").style.right = "0";
-}
-
-function closeMenu(){
-document.getElementById("mobileMenu").style.right = "-260px";
-}
-
-</script>
-
-  <script>
-
-document.getElementById("orderForm").addEventListener("submit", function(e){
-
-e.preventDefault();
-
-let name = document.getElementById("name").value;
-let phone = document.getElementById("phone").value;
-let food = document.getElementById("food").value;
-let quantity = document.getElementById("quantity").value;
-let address = document.getElementById("address").value;
-
-let orderNumber = Math.floor(Math.random()*10000);
-
-let message =
-"New Order%0A"+
-"Order No: "+orderNumber+"%0A"+
-"Name: "+name+"%0A"+
-"Phone: "+phone+"%0A"+
-"Food: "+food+"%0A"+
-"Quantity: "+quantity+"%0A"+
-"Address: "+address;
-
-window.open("https://wa.me/2348069233181?text="+message);
-
-document.getElementById("orderMessage").innerHTML =
-"Order placed successfully! Your Order Number is #" + orderNumber;
-
-});
-
-</script>
-
-  <script src="https://js.paystack.co/v1/inline.js"></script>
-
-<script>
-
-function payNow(){
-
-let handler = PaystackPop.setup({
-
-key: 'YOUR_PAYSTACK_PUBLIC_KEY',
-
-email: "customer@email.com",
-
-amount: 1500 * 100,
-
-currency: "NGN",
-
-callback: function(response){
-
-alert("Payment successful!");
-
-window.location.href="success.html";
-
-}
-
-});
-
-handler.openIframe();
-
-}
-
-</script>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<script>
-
-const supabase = supabase.createClient(
-'https://kjbebnahxuupolrcmlwv.supabase.co',
-'sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_'
-)
-
-async function placeOrder(){
-
-let name = document.getElementById("name").value
-let phone = document.getElementById("phone").value
-let food = document.getElementById("food").value
-let quantity = document.getElementById("quantity").value
-let address = document.getElementById("address").value
-
-const { data, error } = await supabase
-.from('orders')
-.insert([
-{ name, phone, food, quantity, address, payment:"paid" }
-])
-
-alert("Order sent successfully")
-
-}
-
-</script>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
 
@@ -215,43 +70,57 @@ const supabaseClient = supabase.createClient(
 "sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
 )
 
-async function placeOrder(){
+document.getElementById("orderForm").addEventListener("submit", async function(e){
+
+e.preventDefault()
 
 let name = document.getElementById("name").value
 let phone = document.getElementById("phone").value
 let food = document.getElementById("food").value
 let quantity = document.getElementById("quantity").value
-let location = document.getElementById("location").value
+let delivery = document.getElementById("delivery").value
+let address = document.getElementById("address").value
 
-const { data, error } = await supabaseClient
+let orderNumber = Math.floor(Math.random()*9000)+1000
+
+const { error } = await supabaseClient
 .from("orders")
 .insert([
 {
-name: name,
-phone: phone,
-food: food,
-quantity: quantity,
-location: location
+order_no:orderNumber,
+name:name,
+phone:phone,
+food:food,
+quantity:quantity,
+location:address
 }
 ])
 
 if(error){
-alert("Order failed: " + error.message)
+alert("Order failed")
 return
 }
 
-alert("Order placed successfully!")
+localStorage.setItem("order_no",orderNumber)
+localStorage.setItem("name",name)
+localStorage.setItem("phone",phone)
+localStorage.setItem("food",food)
+localStorage.setItem("quantity",quantity)
+localStorage.setItem("address",address)
 
-document.getElementById("name").value=""
-document.getElementById("phone").value=""
-document.getElementById("food").value=""
-document.getElementById("quantity").value=""
-document.getElementById("location").value=""
+window.location.href="order-success.html"
 
+})
+
+function openMenu(){
+document.getElementById("mobileMenu").style.right="0"
+}
+
+function closeMenu(){
+document.getElementById("mobileMenu").style.right="-260px"
 }
 
 </script>
-
 
 </body>
 </html>
