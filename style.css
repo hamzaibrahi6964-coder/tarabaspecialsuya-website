@@ -442,3 +442,45 @@ color:#444;
 font-size:14px;
 }
 
+.order-card{
+
+background:white;
+padding:20px;
+margin:15px 0;
+border-radius:10px;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+
+}
+
+.dashboard-title{
+
+text-align:center;
+margin-top:20px;
+font-size:28px;
+
+}
+
+.status-btn{
+
+padding:8px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+margin-right:10px;
+
+}
+
+.preparing{
+
+background:orange;
+color:white;
+
+}
+
+.delivered{
+
+background:green;
+color:white;
+
+}
+
