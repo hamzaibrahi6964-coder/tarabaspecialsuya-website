@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<title>Order Successful</title>
+<title>Order Receipt</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,14 +11,35 @@
 
 <h2>Order Successful 🎉</h2>
 
-<p>Your order has been received.</p>
-
-<p>The kitchen is preparing your food.</p>
+<div id="receipt"></div>
 
 <a href="index.html">Back to Home</a>
 
 </div>
 
-</body>
+<script>
 
+let orderNo = localStorage.getItem("order_no")
+let name = localStorage.getItem("name")
+let phone = localStorage.getItem("phone")
+let food = localStorage.getItem("food")
+let quantity = localStorage.getItem("quantity")
+let address = localStorage.getItem("address")
+
+document.getElementById("receipt").innerHTML = `
+
+<h3>New Order</h3>
+
+<p><strong>Order No:</strong> ${orderNo}</p>
+<p><strong>Name:</strong> ${name}</p>
+<p><strong>Phone:</strong> ${phone}</p>
+<p><strong>Food:</strong> ${food}</p>
+<p><strong>Quantity:</strong> ${quantity}</p>
+<p><strong>Address:</strong> ${address}</p>
+
+`
+
+</script>
+
+</body>
 </html>
