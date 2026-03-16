@@ -2,11 +2,16 @@
 <html>
 
 <head>
+
 <title>My Orders</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
+
+<div class="orders-container">
 
 <h2>My Orders</h2>
 
@@ -15,6 +20,8 @@
 <button onclick="loadMyOrders()">Check Orders</button>
 
 <div id="orders"></div>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
@@ -29,11 +36,16 @@ async function loadMyOrders(){
 
 let phone = document.getElementById("phoneSearch").value
 
-const { data } = await supabaseClient
+const { data, error } = await supabaseClient
 .from("orders")
 .select("*")
-.eq("phone",phone)
+.eq("phone", phone)
 .order("created_at",{ascending:false})
+
+if(error){
+alert(error.message)
+return
+}
 
 let container = document.getElementById("orders")
 
@@ -47,10 +59,10 @@ container.innerHTML += `
 
 <h3>Order #${order.order_no}</h3>
 
-<p>Food: ${order.food}</p>
-<p>Quantity: ${order.quantity}</p>
-<p>Status: ${order.status}</p>
-<p>Payment: ${order.payment}</p>
+<p><b>Food:</b> ${order.food}</p>
+<p><b>Quantity:</b> ${order.quantity}</p>
+<p><b>Status:</b> ${order.status}</p>
+<p><b>Payment:</b> ${order.payment}</p>
 
 </div>
 
@@ -63,4 +75,5 @@ container.innerHTML += `
 </script>
 
 </body>
+
 </html>
