@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>My Orders</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h2>My Orders</h2>
+
+<input type="text" id="phoneSearch" placeholder="Enter your phone number">
+
+<button onclick="loadMyOrders()">Check Orders</button>
+
+<div id="orders"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const supabaseClient = supabase.createClient(
+"https://kjbebnahxuupolrcmlwv.supabase.co",
+"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+)
+
+async function loadMyOrders(){
+
+let phone = document.getElementById("phoneSearch").value
+
+const { data } = await supabaseClient
+.from("orders")
+.select("*")
+.eq("phone",phone)
+.order("created_at",{ascending:false})
+
+let container = document.getElementById("orders")
+
+container.innerHTML=""
+
+data.forEach(order => {
+
+container.innerHTML += `
+
+<div class="order-card">
+
+<h3>Order #${order.order_no}</h3>
+
+<p>Food: ${order.food}</p>
+<p>Quantity: ${order.quantity}</p>
+<p>Status: ${order.status}</p>
+<p>Payment: ${order.payment}</p>
+
+</div>
+
+`
+
+})
+
+}
+
+</script>
+
+</body>
+</html>
