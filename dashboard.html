@@ -62,24 +62,34 @@ return
 
 let container = document.getElementById("orders-container")
 
-container.innerHTML = ""
-
-data.forEach(order => {
-
 container.innerHTML += `
+
 <div class="order-card">
 
-<h3>${order.name}</h3>
+<h3>Order #${order.order_no}</h3>
 
-<p>Phone: ${order.phone}</p>
+<p><b>Name:</b> ${order.name}</p>
+<p><b>Food:</b> ${order.food}</p>
+<p><b>Quantity:</b> ${order.quantity}</p>
+<p><b>Address:</b> ${order.address}</p>
 
-<p>Food: ${order.food}</p>
+<p><b>Payment:</b> ${order.payment}</p>
+<p><b>Status:</b> ${order.status}</p>
 
-<p>Quantity: ${order.quantity}</p>
+<button onclick="markPaid('${order.id}')">
+Mark Paid
+</button>
 
-<p>Location: ${order.location}</p>
+<button onclick="verifyOrder('${order.id}')">
+Verify Order
+</button>
+
+<button onclick="markReady('${order.id}')">
+Food Ready
+</button>
 
 </div>
+
 `
 
 })
@@ -142,6 +152,39 @@ container.innerHTML += `
 }
 
 loadOrders()
+
+  async function markPaid(id){
+
+await supabaseClient
+.from("orders")
+.update({ payment:"paid" })
+.eq("id",id)
+
+loadOrders()
+
+}
+
+async function verifyOrder(id){
+
+await supabaseClient
+.from("orders")
+.update({ status:"verified" })
+.eq("id",id)
+
+loadOrders()
+
+}
+
+async function markReady(id){
+
+await supabaseClient
+.from("orders")
+.update({ status:"ready" })
+.eq("id",id)
+
+loadOrders()
+
+}
 
 </script>
 
