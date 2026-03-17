@@ -84,7 +84,16 @@ document.getElementById("orderForm").addEventListener("submit", async function(e
 e.preventDefault()
 
 let name = document.getElementById("name").value
-let phone = document.getElementById("phone").value
+let user = JSON.parse(localStorage.getItem("user"))
+
+if(!user){
+alert("Please login first")
+window.location.href="login.html"
+return
+}
+
+let user_id = user.id
+let email = user.email
 let food = document.getElementById("food").value
 let quantity = document.getElementById("quantity").value
 let address = document.getElementById("address").value
