@@ -42,6 +42,8 @@ Taraba <span>Special Suya</span>
 <option>Beef Suya</option>
 <option>Chicken Suya</option>
 <option>Kebab</option>
+<option>Fruite</option>
+<option>Milkshake</option>  
 </select>
 
 <label>Quantity</label>
@@ -80,7 +82,7 @@ let phone = document.getElementById("phone").value
 let food = document.getElementById("food").value
 let quantity = document.getElementById("quantity").value
 let address = document.getElementById("address").value
-  
+
 localStorage.setItem("customerPhone", phone)
 
 let orderNumber = Math.floor(Math.random()*9000)+1000
@@ -95,12 +97,13 @@ phone: phone,
 food: food,
 quantity: quantity,
 address: address,
+status: "new",
 payment: "pending"
 }
 ])
 
 if(error){
-alert(error.message)
+alert("Order failed: " + error.message)
 return
 }
 
@@ -114,10 +117,6 @@ localStorage.setItem("address",address)
 window.location.href="order-success.html"
 
 })
-
-</script>
-
-</script>
 
 </script>
 
