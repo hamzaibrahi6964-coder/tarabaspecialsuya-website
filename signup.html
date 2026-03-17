@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Signup</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="form-container">
+<h2>Create Account</h2>
+
+<input type="text" id="fullname" placeholder="Full Name">
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="signup()">Sign Up</button>
+
+<a href="login.html">Already have account? Login</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const supabaseClient = supabase.createClient(
+"https://kjbebnahxuupolrcmlwv.supabase.co",
+"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+)
+
+async function signup(){
+
+let email = document.getElementById("email").value
+let password = document.getElementById("password").value
+
+const { data, error } = await supabaseClient.auth.signUp({
+email: email,
+password: password
+})
+
+if(error){
+alert(error.message)
+return
+}
+
+alert("Signup successful. Please login.")
+window.location.href="login.html"
+
+}
+
+</script>
+
+</body>
+</html>
