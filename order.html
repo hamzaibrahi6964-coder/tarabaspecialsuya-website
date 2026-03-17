@@ -26,8 +26,7 @@ Taraba <span>Special Suya</span>
 <a href="contact.html">Contact</a>
 <a href="signup.html">Signup</a>
 <a href="login.html">Login</a>
-<a href="profile.html">Profile</a>
-<a href="my-orders.html">My Orders</a> 
+<a href="profile.html">Profile</a> 
   
 </div>
 
@@ -83,7 +82,6 @@ document.getElementById("orderForm").addEventListener("submit", async function(e
 
 e.preventDefault()
 
-let name = document.getElementById("name").value
 let user = JSON.parse(localStorage.getItem("user"))
 
 if(!user){
@@ -92,13 +90,10 @@ window.location.href="login.html"
 return
 }
 
-let user_id = user.id
-let email = user.email
+let name = document.getElementById("name").value
 let food = document.getElementById("food").value
 let quantity = document.getElementById("quantity").value
 let address = document.getElementById("address").value
-
-localStorage.setItem("customerPhone", phone)
 
 let orderNumber = Math.floor(Math.random()*9000)+1000
 
@@ -108,8 +103,8 @@ const { error } = await supabaseClient
 {
 order_no: orderNumber,
 name: name,
-user_id: user_id,
-email: email,
+user_id: user.id,
+email: user.email,
 food: food,
 quantity: quantity,
 address: address,
@@ -125,7 +120,6 @@ return
 
 localStorage.setItem("order_no",orderNumber)
 localStorage.setItem("name",name)
-localStorage.setItem("phone",phone)
 localStorage.setItem("food",food)
 localStorage.setItem("quantity",quantity)
 localStorage.setItem("address",address)
@@ -135,6 +129,6 @@ window.location.href="order-success.html"
 })
 
 </script>
-
+  
 </body>
 </html>
