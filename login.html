@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="form-container">
+<h2>Login</h2>
+
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const supabaseClient = supabase.createClient(
+"https://kjbebnahxuupolrcmlwv.supabase.co",
+"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+)
+
+async function login(){
+
+let email = document.getElementById("email").value
+let password = document.getElementById("password").value
+
+const { data, error } = await supabaseClient.auth.signInWithPassword({
+email: email,
+password: password
+})
+
+if(error){
+alert(error.message)
+return
+}
+
+alert("Login successful")
+
+// save user session
+localStorage.setItem("user", JSON.stringify(data.user))
+
+window.location.href="index.html"
+
+}
+
+</script>
+
+</body>
+</html>
