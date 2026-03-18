@@ -2,26 +2,122 @@
 <html>
 <head>
 <title>Profile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h2>My Profile</h2>
+<!-- NAV -->
+<nav>
+<a href="index.html" class="logo">
+Taraba <span>Special Suya</span>
+</a>
 
-<p id="userEmail"></p>
+<div class="menu-icon" onclick="openMenu()">☰</div>
+</nav>
 
-<button onclick="logout()">Logout</button>
+<!-- MENU -->
+<div class="mobile-menu" id="mobileMenu">
+<span onclick="closeMenu()" class="close-menu">✕</span>
+
+<a href="index.html">Home</a>
+<a href="menu.html">Menu</a>
+<a href="order.html">Order</a>
+<a href="my-orders.html">My Orders</a>
+<a href="profile.html">Profile</a>
+
+</div>
+
+<!-- PROFILE -->
+<section class="profile-section">
+
+<div class="profile-card">
+
+<img id="profileImage" src="https://via.placeholder.com/120" class="profile-img">
+
+<input type="file" id="imageUpload">
+
+<h2 id="userEmail"></h2>
+
+<input type="text" id="fullName" placeholder="Full Name">
+
+<button class="save-btn" onclick="saveProfile()">Save Profile</button>
+
+<button class="logout-btn" onclick="logout()">Logout</button>
+
+</div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
 
+const supabaseClient = supabase.createClient(
+"https://kjbebnahxuupolrcmlwv.supabase.co",
+"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+)
+
 let user = JSON.parse(localStorage.getItem("user"))
+
+if(!user){
+alert("Please login first")
+window.location.href="login.html"
+}
 
 document.getElementById("userEmail").innerText = user.email
 
+// load saved name
+let savedName = localStorage.getItem("fullName")
+if(savedName){
+document.getElementById("fullName").value = savedName
+}
+
+// save profile
+function saveProfile(){
+let name = document.getElementById("fullName").value
+localStorage.setItem("fullName", name)
+alert("Profile saved!")
+}
+
+// logout
 function logout(){
 localStorage.removeItem("user")
 window.location.href="login.html"
+}
+
+// image upload preview
+document.getElementById("imageUpload").addEventListener("change", function(e){
+
+let file = e.target.files[0]
+
+if(file){
+let reader = new FileReader()
+
+reader.onload = function(){
+document.getElementById("profileImage").src = reader.result
+localStorage.setItem("profileImage", reader.result)
+}
+
+reader.readAsDataURL(file)
+}
+
+})
+
+// load saved image
+let savedImage = localStorage.getItem("profileImage")
+if(savedImage){
+document.getElementById("profileImage").src = savedImage
+}
+
+// menu
+function openMenu(){
+document.getElementById("mobileMenu").style.right = "0";
+}
+
+function closeMenu(){
+document.getElementById("mobileMenu").style.right = "-260px";
 }
 
 </script>
