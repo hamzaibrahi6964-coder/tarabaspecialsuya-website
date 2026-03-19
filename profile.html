@@ -65,28 +65,61 @@ alert("Please login first")
 window.location.href="login.html"
 }
 
+// show email
 document.getElementById("userEmail").innerText = user.email
 
 
-let savedName = localStorage.getItem("fullName")
-if(savedName){
-document.getElementById("fullName").value = savedName
+// 🔥 LOAD PROFILE FROM DATABASE
+async function loadProfile(){
+
+const { data, error } = await supabaseClient
+.from("profiles")
+.select("*")
+.eq("id", user.id)
+.single()
+
+if(data){
+document.getElementById("fullName").value = data.name || ""
 }
 
+}
 
-function saveProfile(){
+loadProfile()
+
+
+// 🔥 SAVE PROFILE TO DATABASE
+async function saveProfile(){
+
 let name = document.getElementById("fullName").value
-localStorage.setItem("fullName", name)
-alert("Profile saved!")
+
+const { error } = await supabaseClient
+.from("profiles")
+.upsert([
+{
+id: user.id,
+email: user.email,
+name: name
+}
+])
+
+if(error){
+alert("Error: " + error.message)
+return
+}
+
+alert("Profile saved successfully!")
+
 }
 
 
+// logout
 function logout(){
 localStorage.removeItem("user")
 window.location.href="login.html"
 }
 
 
+// image preview (still local for now)
 document.getElementById("imageUpload").addEventListener("change", function(e){
 
 let file = e.target.files[0]
@@ -105,12 +138,14 @@ reader.readAsDataURL(file)
 })
 
 
+// load image
 let savedImage = localStorage.getItem("profileImage")
 if(savedImage){
 document.getElementById("profileImage").src = savedImage
 }
 
 
+// menu
 function openMenu(){
 document.getElementById("mobileMenu").style.right = "0";
 }
@@ -120,6 +155,5 @@ document.getElementById("mobileMenu").style.right = "-260px";
 }
 
 </script>
-
 </body>
 </html>
