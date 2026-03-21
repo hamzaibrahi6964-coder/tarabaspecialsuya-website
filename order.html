@@ -90,7 +90,13 @@ window.location.href="login.html"
 return
 }
 
-let name = document.getElementById("name").value
+let profile = await supabaseClient
+.from("profiles")
+.select("*")
+.eq("id", user.id)
+.single()
+
+let name = profile.data.full_name
 let food = document.getElementById("food").value
 let quantity = document.getElementById("quantity").value
 let address = document.getElementById("address").value
@@ -104,7 +110,6 @@ const { error } = await supabaseClient
 order_no: orderNumber,
 name: name,
 user_id: user.id,
-email: user.email,
 food: food,
 quantity: quantity,
 address: address,
