@@ -65,11 +65,9 @@ alert("Please login first")
 window.location.href="login.html"
 }
 
-// show email
 document.getElementById("userEmail").innerText = user.email
 
 
-// 🔥 LOAD PROFILE FROM DATABASE
 async function loadProfile(){
 
 const { data, error } = await supabaseClient
@@ -87,7 +85,6 @@ document.getElementById("fullName").value = data.name || ""
 loadProfile()
 
 
-// 🔥 SAVE PROFILE TO DATABASE
 async function saveProfile(){
 
 let name = document.getElementById("fullName").value
@@ -112,14 +109,12 @@ alert("Profile saved successfully!")
 }
 
 
-// logout
 function logout(){
 localStorage.removeItem("user")
 window.location.href="login.html"
 }
 
 
-// image preview (still local for now)
 document.getElementById("imageUpload").addEventListener("change", function(e){
 
 let file = e.target.files[0]
@@ -138,14 +133,12 @@ reader.readAsDataURL(file)
 })
 
 
-// load image
 let savedImage = localStorage.getItem("profileImage")
 if(savedImage){
 document.getElementById("profileImage").src = savedImage
 }
 
 
-// menu
 function openMenu(){
 document.getElementById("mobileMenu").style.right = "0";
 }
