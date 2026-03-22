@@ -1,60 +1,39 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <title>My Orders</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
-  <nav>
-
+<nav>
 <a href="index.html" class="logo">
 Taraba <span>Special Suya</span>
 </a>
 
-<a href="order.html" class="cta-btn">
-Order Now
-</a>
-
-<div class="menu-icon" onclick="openMenu()">
-☰
-</div>
-
+<div class="menu-icon" onclick="openMenu()">☰</div>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
-
 <span onclick="closeMenu()" class="close-menu">✕</span>
 
 <a href="index.html">Home</a>
 <a href="menu.html">Menu</a>
 <a href="order.html">Order</a>
 <a href="my-orders.html">My Orders</a>
-<a href="gallery.html">Gallery</a>
-<a href="contact.html">Contact</a>
-<a href="signup.html">Signup</a>
-<a href="login.html">Login</a>
 <a href="profile.html">Profile</a>
-<a href="my-orders.html">My Orders</a>  
 
 </div>
 
-<div class="orders-container">
+<section class="orders-section">
 
 <h2>My Orders</h2>
 
-<input type="text" id="phoneSearch" placeholder="Enter your phone number">
-
-<button onclick="loadMyOrders()">Check Orders</button>
-
 <div id="orders"></div>
 
-</div>
+</section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
@@ -65,60 +44,60 @@ const supabaseClient = supabase.createClient(
 "sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
 )
 
-async function loadMyOrders(){
+// MENU
+function openMenu(){
+document.getElementById("mobileMenu").style.right = "0";
+}
 
-let phone = document.getElementById("phoneSearch").value
+function closeMenu(){
+document.getElementById("mobileMenu").style.right = "-260px";
+}
+
+// LOAD ORDERS
+async function loadOrders(){
+
+let user = JSON.parse(localStorage.getItem("user"))
+
+if(!user){
+alert("Please login first")
+window.location.href="login.html"
+return
+}
 
 const { data, error } = await supabaseClient
 .from("orders")
 .select("*")
-.eq("phone", phone)
-.order("created_at",{ascending:false})
-
-if(error){
-alert(error.message)
-return
-}
+.eq("user_id", user.id)
+.order("created_at", { ascending: false })
 
 let container = document.getElementById("orders")
 
-container.innerHTML=""
+container.innerHTML = ""
+
+if(!data || data.length === 0){
+container.innerHTML = "<p>No orders yet</p>"
+return
+}
 
 data.forEach(order => {
 
 container.innerHTML += `
-
 <div class="order-card">
-
 <h3>Order #${order.order_no}</h3>
-
 <p><b>Food:</b> ${order.food}</p>
 <p><b>Quantity:</b> ${order.quantity}</p>
 <p><b>Status:</b> ${order.status}</p>
 <p><b>Payment:</b> ${order.payment}</p>
-
 </div>
-
 `
 
 })
 
 }
 
-</script>
-
-  <script>
-
-function openMenu(){
-document.getElementById("mobileMenu").style.right="0";
-}
-
-function closeMenu(){
-document.getElementById("mobileMenu").style.right="-260px";
-}
+loadOrders()
 
 </script>
 
 </body>
-
 </html>
