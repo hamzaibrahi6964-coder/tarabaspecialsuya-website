@@ -84,10 +84,19 @@ data.forEach(order => {
 container.innerHTML += `
 <div class="order-card">
 <h3>Order #${order.order_no}</h3>
+
 <p><b>Food:</b> ${order.food}</p>
 <p><b>Quantity:</b> ${order.quantity}</p>
+
 <p><b>Status:</b> ${order.status}</p>
 <p><b>Payment:</b> ${order.payment}</p>
+
+<p><b>Ordered:</b> ${new Date(order.created_at).toLocaleString()}</p>
+
+${order.completed_at ? 
+`<p><b>Ready:</b> ${new Date(order.completed_at).toLocaleString()}</p>` 
+: ""}
+
 </div>
 `
 
