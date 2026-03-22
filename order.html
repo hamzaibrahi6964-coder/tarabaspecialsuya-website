@@ -69,43 +69,25 @@ const supabaseClient = supabase.createClient(
 "sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
 )
 
-function openMenu(){
-document.getElementById("mobileMenu").style.right = "0";
-}
+let user = JSON.parse(localStorage.getItem("user"))
 
-function closeMenu(){
-document.getElementById("mobileMenu").style.right = "-260px";
+if(!user){
+alert("Please login first")
+window.location.href="login.html"
 }
 
 document.getElementById("orderForm").addEventListener("submit", async function(e){
 
 e.preventDefault()
 
-let user = JSON.parse(localStorage.getItem("user"))
-
-if(!user){
-alert("Please login first")
-window.location.href="login.html"
-return
-}
-
-let { data: profile, error: profileError } = await supabaseClient
+const { data: profile } = await supabaseClient
 .from("profiles")
 .select("*")
 .eq("id", user.id)
 .single()
 
-if(profileError || !profile){
+if(!profile){
 alert("Please complete your profile first")
-window.location.href="profile.html"
-return
-}
-
-let name = profile.full_name
-let phone = profile.phone
-
-if(!phone){
-alert("Please add your phone number in profile")
 window.location.href="profile.html"
 return
 }
@@ -121,8 +103,8 @@ const { error } = await supabaseClient
 .insert([
 {
 order_no: orderNumber,
-name: name,
-phone: phone,
+name: profile.full_name,
+phone: profile.phone,
 user_id: user.id,
 food: food,
 quantity: quantity,
@@ -138,8 +120,7 @@ return
 }
 
 alert("Order placed successfully!")
-
-window.location.href="order-success.html"
+window.location.href="my-orders.html"
 
 })
 
