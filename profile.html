@@ -16,7 +16,6 @@ Taraba <span>Special Suya</span>
 <div class="menu-icon" onclick="openMenu()">☰</div>
 </nav>
 
-  
 <div class="mobile-menu" id="mobileMenu">
 <span onclick="closeMenu()" class="close-menu">✕</span>
 
@@ -27,7 +26,6 @@ Taraba <span>Special Suya</span>
 <a href="profile.html">Profile</a>
 
 </div>
-
 
 <section class="profile-section">
 
@@ -40,6 +38,8 @@ Taraba <span>Special Suya</span>
 <h2 id="userEmail"></h2>
 
 <input type="text" id="fullName" placeholder="Full Name">
+
+<input type="text" id="phone" placeholder="Phone Number">
 
 <button class="save-btn" onclick="saveProfile()">Save Profile</button>
 
@@ -78,6 +78,7 @@ const { data, error } = await supabaseClient
 
 if(data){
 document.getElementById("fullName").value = data.full_name || ""
+document.getElementById("phone").value = data.phone || ""
 }
 
 }
@@ -88,6 +89,7 @@ loadProfile()
 async function saveProfile(){
 
 let name = document.getElementById("fullName").value
+let phone = document.getElementById("phone").value
 
 const { error } = await supabaseClient
 .from("profiles")
@@ -95,7 +97,8 @@ const { error } = await supabaseClient
 {
 id: user.id,
 email: user.email,
-full_name: name
+full_name: name,
+phone: phone
 }
 ])
 
@@ -132,7 +135,6 @@ reader.readAsDataURL(file)
 
 })
 
-
 let savedImage = localStorage.getItem("profileImage")
 if(savedImage){
 document.getElementById("profileImage").src = savedImage
@@ -148,5 +150,6 @@ document.getElementById("mobileMenu").style.right = "-260px";
 }
 
 </script>
+
 </body>
 </html>
