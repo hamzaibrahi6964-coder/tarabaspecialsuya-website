@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Order</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -17,17 +18,13 @@ Taraba <span>Special Suya</span>
 
 <div class="mobile-menu" id="mobileMenu">
 <span onclick="closeMenu()" class="close-menu">✕</span>
-  
+
 <a href="index.html">Home</a>
 <a href="menu.html">Menu</a>
-<a href="order.html">Order</a> 
+<a href="order.html">Order</a>
 <a href="my-orders.html">My Orders</a>
-<a href="gallery.html">Gallery</a>
-<a href="contact.html">Contact</a>
-<a href="signup.html">Signup</a>
-<a href="login.html">Login</a>
-<a href="profile.html">Profile</a> 
-  
+<a href="profile.html">Profile</a>
+
 </div>
 
 <section class="order-section">
@@ -35,20 +32,14 @@ Taraba <span>Special Suya</span>
 <h2>Place Your Order</h2>
 
 <form id="orderForm">
-  
-<label>Name</label>
-<input type="text" id="name" required>
-
-<label>Phone</label>
-<input type="text" id="phone" required>
 
 <label>Food</label>
 <select id="food">
 <option>Beef Suya</option>
 <option>Chicken Suya</option>
 <option>Kebab</option>
-<option>Fruite</option>
-<option>Milkshake</option>  
+<option>Fruit</option>
+<option>Milkshake</option>
 </select>
 
 <label>Quantity</label>
@@ -68,7 +59,7 @@ Taraba <span>Special Suya</span>
 </form>
 
 </section>
-  
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
@@ -77,6 +68,14 @@ const supabaseClient = supabase.createClient(
 "https://kjbebnahxuupolrcmlwv.supabase.co",
 "sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
 )
+
+function openMenu(){
+document.getElementById("mobileMenu").style.right = "0";
+}
+
+function closeMenu(){
+document.getElementById("mobileMenu").style.right = "-260px";
+}
 
 document.getElementById("orderForm").addEventListener("submit", async function(e){
 
@@ -90,13 +89,27 @@ window.location.href="login.html"
 return
 }
 
-let profile = await supabaseClient
+let { data: profile, error: profileError } = await supabaseClient
 .from("profiles")
 .select("*")
 .eq("id", user.id)
 .single()
 
-let name = profile.data.full_name
+if(profileError || !profile){
+alert("Please complete your profile first")
+window.location.href="profile.html"
+return
+}
+
+let name = profile.full_name
+let phone = profile.phone
+
+if(!phone){
+alert("Please add your phone number in profile")
+window.location.href="profile.html"
+return
+}
+
 let food = document.getElementById("food").value
 let quantity = document.getElementById("quantity").value
 let address = document.getElementById("address").value
@@ -109,6 +122,7 @@ const { error } = await supabaseClient
 {
 order_no: orderNumber,
 name: name,
+phone: phone,
 user_id: user.id,
 food: food,
 quantity: quantity,
@@ -123,17 +137,13 @@ alert("Order failed: " + error.message)
 return
 }
 
-localStorage.setItem("order_no",orderNumber)
-localStorage.setItem("name",name)
-localStorage.setItem("food",food)
-localStorage.setItem("quantity",quantity)
-localStorage.setItem("address",address)
+alert("Order placed successfully!")
 
 window.location.href="order-success.html"
 
 })
 
 </script>
-  
+
 </body>
 </html>
