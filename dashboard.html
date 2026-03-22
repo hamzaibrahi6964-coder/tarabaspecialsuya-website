@@ -1,118 +1,28 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 <title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="dashboard">
+<nav>
+<h2 style="color:white;">Admin Dashboard</h2>
+</nav>
 
-<h1>Taraba Special Suya Orders</h1>
+<section class="orders-section">
 
-  <div id="orders"></div>
+<h2>All Orders</h2>
 
-<button onclick="logout()">Logout</button>
+<div id="orders"></div>
 
-<div id="orders-container">
-
-<p>Loading orders...</p>
-
-</div>
-
-</div>
+</section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-  
-  let sound = new Audio("notification.mp3")
-
-const supabaseClient = supabase.createClient(
-"https://kjbebnahxuupolrcmlwv.supabase.co",
-"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
-)
-
-async function loadOrders(){
-
-  supabaseClient
-.channel('orders-channel')
-.on(
-'postgres_changes',
-{ event: 'INSERT', schema: 'public', table: 'orders' },
-(payload) => {
-
-alert("🔔 New Order Received!")
-
-loadOrders()
-
-}
-)
-.subscribe()
-  
-const { data, error } = await supabaseClient
-.from("orders")
-.select("*")
-.order("id", { ascending:false })
-
-if(error){
-console.log(error)
-return
-}
-
-let container = document.getElementById("orders-container")
-
-container.innerHTML += `
-
-<div class="order-card">
-
-<h3>Order #${order.order_no}</h3>
-
-<p><b>Name:</b> ${order.name}</p>
-<p><b>Food:</b> ${order.food}</p>
-<p><b>Quantity:</b> ${order.quantity}</p>
-<p><b>Address:</b> ${order.address}</p>
-
-<p><b>Payment:</b> ${order.payment}</p>
-<p><b>Status:</b> ${order.status}</p>
-
-<button onclick="markPaid('${order.id}')">
-Mark Paid
-</button>
-
-<button onclick="verifyOrder('${order.id}')">
-Verify Order
-</button>
-
-<button onclick="markReady('${order.id}')">
-Food Ready
-</button>
-
-</div>
-
-`
-
-})
-
-}
-
-async function logout(){
-
-await supabaseClient.auth.signOut()
-
-window.location.href = "admin-login.html"
-
-}
-
-loadOrders()
-
-</script>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<script>
 
 const supabaseClient = supabase.createClient(
 "https://kjbebnahxuupolrcmlwv.supabase.co",
@@ -124,16 +34,19 @@ async function loadOrders(){
 const { data, error } = await supabaseClient
 .from("orders")
 .select("*")
-.order("created_at", { ascending:false })
+.order("created_at", { ascending: false })
 
 let container = document.getElementById("orders")
+container.innerHTML = ""
 
-container.innerHTML=""
+if(!data || data.length === 0){
+container.innerHTML = "<p>No orders yet</p>"
+return
+}
 
 data.forEach(order => {
 
 container.innerHTML += `
-
 <div class="order-card">
 
 <h3>Order #${order.order_no}</h3>
@@ -141,12 +54,24 @@ container.innerHTML += `
 <p><b>Name:</b> ${order.name}</p>
 <p><b>Phone:</b> ${order.phone}</p>
 <p><b>Food:</b> ${order.food}</p>
-<p><b>Quantity:</b> ${order.quantity}</p>
-<p><b>Address:</b> ${order.address}</p>
+<p><b>Qty:</b> ${order.quantity}</p>
+
+<p><b>Status:</b> ${order.status}</p>
 <p><b>Payment:</b> ${order.payment}</p>
 
-</div>
+<p><b>Ordered:</b> ${new Date(order.created_at).toLocaleString()}</p>
 
+${order.completed_at ? 
+`<p><b>Ready:</b> ${new Date(order.completed_at).toLocaleString()}</p>` 
+: ""}
+
+${
+order.status !== "ready" ? 
+`<button onclick="markAsReady('${order.id}')">Mark Ready</button>` 
+: `<button disabled>Completed</button>`
+}
+
+</div>
 `
 
 })
@@ -155,41 +80,30 @@ container.innerHTML += `
 
 loadOrders()
 
-  async function markPaid(id){
+async function markAsReady(orderId){
 
-await supabaseClient
+const { error } = await supabaseClient
 .from("orders")
-.update({ payment:"paid" })
-.eq("id",id)
+.update({
+status: "ready",
+completed_at: new Date().toISOString()
+})
+.eq("id", orderId)
+
+if(error){
+alert("Error: " + error.message)
+return
+}
+
+alert("Order marked as READY")
 
 loadOrders()
 
 }
 
-async function verifyOrder(id){
-
-await supabaseClient
-.from("orders")
-.update({ status:"verified" })
-.eq("id",id)
-
-loadOrders()
-
-}
-
-async function markReady(id){
-
-await supabaseClient
-.from("orders")
-.update({ status:"ready" })
-.eq("id",id)
-
-loadOrders()
-
-}
+setInterval(loadOrders, 5000)
 
 </script>
 
 </body>
-
 </html>
