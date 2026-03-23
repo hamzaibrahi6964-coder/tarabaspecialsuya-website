@@ -106,6 +106,27 @@ ${order.completed_at ?
 
 loadOrders()
 
+supabaseClient
+.channel('customer-orders')
+.on(
+'postgres_changes',
+{
+event: '*',
+schema: 'public',
+table: 'orders'
+},
+(payload) => {
+
+let user = JSON.parse(localStorage.getItem("user"))
+
+if(payload.new && payload.new.user_id === user.id){
+loadOrders()
+}
+
+}
+)
+.subscribe()
+
 </script>
 
 </body>
