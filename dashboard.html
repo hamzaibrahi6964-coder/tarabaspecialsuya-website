@@ -1,129 +1,175 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <nav>
-<h2 style="color:white;">Admin Dashboard</h2>
+  <a href="index.html" class="logo">
+    Taraba <span>Special Suya</span>
+  </a>
 </nav>
 
-<section class="orders-section">
+<section class="dashboard-section">
+  <h2>Admin Dashboard</h2>
 
-<h2>All Orders</h2>
+  <div class="dashboard-summary">
+    <div class="summary-card">
+      <h3 id="totalOrders">0</h3>
+      <p>Total Orders</p>
+    </div>
 
-<div id="orders"></div>
+    <div class="summary-card">
+      <h3 id="newOrders">0</h3>
+      <p>New Orders</p>
+    </div>
 
+    <div class="summary-card">
+      <h3 id="readyOrders">0</h3>
+      <p>Ready Orders</p>
+    </div>
+
+    <div class="summary-card">
+      <h3 id="pendingPayments">0</h3>
+      <p>Pending Payments</p>
+    </div>
+  </div>
+
+  <div class="dashboard-tools">
+    <input type="text" id="searchInput" placeholder="Search by name, food or phone" onkeyup="loadOrders()">
+
+    <select id="statusFilter" onchange="loadOrders()">
+      <option value="all">All Status</option>
+      <option value="new">New</option>
+      <option value="ready">Ready</option>
+    </select>
+
+    <select id="paymentFilter" onchange="loadOrders()">
+      <option value="all">All Payments</option>
+      <option value="pending">Pending</option>
+      <option value="paid">Paid</option>
+    </select>
+  </div>
+
+  <div id="orders"></div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-
 const supabaseClient = supabase.createClient(
-"https://kjbebnahxuupolrcmlwv.supabase.co",
-"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+  "https://kjbebnahxuupolrcmlwv.supabase.co",
+  "YOUR_SUPABASE_ANON_KEY"
 )
 
-async function loadOrders(){
+async function loadOrders() {
+  let search = document.getElementById("searchInput").value.toLowerCase()
+  let statusFilter = document.getElementById("statusFilter").value
+  let paymentFilter = document.getElementById("paymentFilter").value
 
-const { data, error } = await supabaseClient
-.from("orders")
-.select("*")
-.order("created_at", { ascending: false })
+  const { data, error } = await supabaseClient
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false })
 
-let container = document.getElementById("orders")
-container.innerHTML = ""
+  let container = document.getElementById("orders")
+  container.innerHTML = ""
 
-if(!data || data.length === 0){
-container.innerHTML = "<p>No orders yet</p>"
-return
+  if (error) {
+    container.innerHTML = "<p>Failed to load orders</p>"
+    return
+  }
+
+  let filteredOrders = data.filter(order => {
+    let matchesSearch =
+      (order.name && order.name.toLowerCase().includes(search)) ||
+      (order.food && order.food.toLowerCase().includes(search)) ||
+      (order.phone && order.phone.toLowerCase().includes(search))
+
+    let matchesStatus = statusFilter === "all" || order.status === statusFilter
+    let matchesPayment = paymentFilter === "all" || order.payment === paymentFilter
+
+    return matchesSearch && matchesStatus && matchesPayment
+  })
+
+  document.getElementById("totalOrders").innerText = data.length
+  document.getElementById("newOrders").innerText = data.filter(order => order.status === "new").length
+  document.getElementById("readyOrders").innerText = data.filter(order => order.status === "ready").length
+  document.getElementById("pendingPayments").innerText = data.filter(order => order.payment === "pending").length
+
+  if (filteredOrders.length === 0) {
+    container.innerHTML = "<p>No orders found</p>"
+    return
+  }
+
+  filteredOrders.forEach(order => {
+    let statusClass = order.status === "ready" ? "status-ready" : "status-new"
+    let paymentClass = order.payment === "paid" ? "payment-paid" : "payment-pending"
+
+    container.innerHTML += `
+      <div class="admin-order-card">
+        <div class="order-top">
+          <h3>Order #${order.order_no}</h3>
+          <span class="${statusClass}">${order.status}</span>
+        </div>
+
+        <p><b>Name:</b> ${order.name || "-"}</p>
+        <p><b>Phone:</b> ${order.phone || "-"}</p>
+        <p><b>Food:</b> ${order.food || "-"}</p>
+        <p><b>Quantity:</b> ${order.quantity || "-"}</p>
+        <p><b>Address:</b> ${order.address || "-"}</p>
+        <p><b>Payment:</b> <span class="${paymentClass}">${order.payment || "-"}</span></p>
+        <p><b>Ordered:</b> ${order.created_at ? new Date(order.created_at).toLocaleString() : "-"}</p>
+        <p><b>Ready Time:</b> ${order.completed_at ? new Date(order.completed_at).toLocaleString() : "Not yet ready"}</p>
+
+        <div class="order-actions">
+          <button onclick="markAsReady('${order.id}')">Mark Ready</button>
+          <button onclick="markAsPaid('${order.id}')">Mark Paid</button>
+        </div>
+      </div>
+    `
+  })
 }
 
-data.forEach(order => {
+async function markAsReady(orderId) {
+  const { error } = await supabaseClient
+    .from("orders")
+    .update({
+      status: "ready",
+      completed_at: new Date().toISOString()
+    })
+    .eq("id", orderId)
 
-container.innerHTML += `
-<div class="order-card">
+  if (error) {
+    alert("Failed to update order")
+    return
+  }
 
-<h3>Order #${order.order_no}</h3>
-
-<p><b>Name:</b> ${order.name}</p>
-<p><b>Phone:</b> ${order.phone}</p>
-<p><b>Food:</b> ${order.food}</p>
-<p><b>Qty:</b> ${order.quantity}</p>
-
-<p><b>Status:</b> ${order.status}</p>
-<p><b>Payment:</b> ${order.payment}</p>
-
-<p><b>Ordered:</b> ${new Date(order.created_at).toLocaleString()}</p>
-
-${order.completed_at ? 
-`<p><b>Ready:</b> ${new Date(order.completed_at).toLocaleString()}</p>` 
-: ""}
-
-${
-order.status !== "ready" ? 
-`<button onclick="markAsReady('${order.id}')">Mark Ready</button>` 
-: `<button disabled>Completed</button>`
+  loadOrders()
 }
 
-</div>
-`
+async function markAsPaid(orderId) {
+  const { error } = await supabaseClient
+    .from("orders")
+    .update({
+      payment: "paid"
+    })
+    .eq("id", orderId)
 
-})
+  if (error) {
+    alert("Failed to update payment")
+    return
+  }
 
+  loadOrders()
 }
 
 loadOrders()
 
-async function markAsReady(orderId){
-
-const { error } = await supabaseClient
-.from("orders")
-.update({
-status: "ready",
-completed_at: new Date().toISOString()
-})
-.eq("id", orderId)
-
-if(error){
-alert("Error: " + error.message)
-return
-}
-
-alert("Order marked as READY")
-
-loadOrders()
-
-}
-
-supabaseClient
-.channel('orders-channel')
-.on(
-'postgres_changes',
-{
-event: '*',
-schema: 'public',
-table: 'orders'
-},
-(payload) => {
-
-console.log("Change received!", payload)
-
-loadOrders()
-
-if(payload.eventType === "INSERT"){
-alert("🔴 New Order Received!")
-}
-
-}
-)
-.subscribe()
-
+setInterval(loadOrders, 5000)
 </script>
 
 </body>
