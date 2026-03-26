@@ -1,129 +1,147 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Order</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+  <title>Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <nav>
-<a href="index.html" class="logo">
-Taraba <span>Special Suya</span>
-</a>
+  <a href="index.html" class="logo">
+    Taraba <span>Special Suya</span>
+  </a>
 
-<div class="menu-icon" onclick="openMenu()">☰</div>
+  <div class="menu-icon" onclick="openMenu()">☰</div>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
-<span onclick="closeMenu()" class="close-menu">✕</span>
+  <span onclick="closeMenu()" class="close-menu">✕</span>
 
-<a href="index.html">Home</a>
-<a href="menu.html">Menu</a>
-<a href="order.html">Order</a>
-<a href="my-orders.html">My Orders</a>
-<a href="profile.html">Profile</a>
-
+  <a href="index.html">Home</a>
+  <a href="menu.html">Menu</a>
+  <a href="order.html">Order</a>
+  <a href="my-orders.html">My Orders</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="contact.html">Contact</a>
+  <a href="signup.html">Signup</a>
+  <a href="login.html">Login</a>
+  <a href="profile.html">Profile</a>
 </div>
 
 <section class="order-section">
+  <div class="order-box">
+    <h2>Place Your Order</h2>
 
-<h2>Place Your Order</h2>
+    <form id="orderForm">
+      <label>Food</label>
+      <select id="food" required>
+        <option>Beef Suya</option>
+        <option>Chicken Suya</option>
+        <option>Kebab</option>
+        <option>Fruit</option>
+        <option>Milkshake</option>
+      </select>
 
-<form id="orderForm">
+      <label>Quantity</label>
+      <input type="number" id="quantity" value="1" min="1" required>
 
-<label>Food</label>
-<select id="food">
-<option>Beef Suya</option>
-<option>Chicken Suya</option>
-<option>Kebab</option>
-<option>Fruit</option>
-<option>Milkshake</option>
-</select>
+      <label>Delivery Type</label>
+      <select id="delivery" required>
+        <option>Pickup</option>
+        <option>Home Delivery</option>
+      </select>
 
-<label>Quantity</label>
-<input type="number" id="quantity" value="1">
+      <label>Address</label>
+      <input type="text" id="address" required>
 
-<label>Delivery Type</label>
-<select id="delivery">
-<option>Pickup</option>
-<option>Home Delivery</option>
-</select>
-
-<label>Address</label>
-<input type="text" id="address">
-
-<button type="submit">Place Order</button>
-
-</form>
-
+      <button type="submit">Place Order</button>
+    </form>
+  </div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-
 const supabaseClient = supabase.createClient(
-"https://kjbebnahxuupolrcmlwv.supabase.co",
-"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
-)
+  "https://kjbebnahxuupolrcmlwv.supabase.co",
+  "sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+);
 
-let user = JSON.parse(localStorage.getItem("user"))
-
-if(!user){
-alert("Please login first")
-window.location.href="login.html"
+// menu open/close
+function openMenu() {
+  document.getElementById("mobileMenu").style.right = "0";
 }
 
-document.getElementById("orderForm").addEventListener("submit", async function(e){
-
-e.preventDefault()
-
-const { data: profile } = await supabaseClient
-.from("profiles")
-.select("*")
-.eq("id", user.id)
-.single()
-
-if(!profile){
-alert("Please complete your profile first")
-window.location.href="profile.html"
-return
+function closeMenu() {
+  document.getElementById("mobileMenu").style.right = "-260px";
 }
 
-let food = document.getElementById("food").value
-let quantity = document.getElementById("quantity").value
-let address = document.getElementById("address").value
+// auto-select food and quantity from menu link
+const params = new URLSearchParams(window.location.search);
+const selectedFood = params.get("food");
+const selectedQty = params.get("qty");
 
-let orderNumber = Math.floor(Math.random()*9000)+1000
-
-const { error } = await supabaseClient
-.from("orders")
-.insert([
-{
-order_no: orderNumber,
-name: profile.full_name,
-phone: profile.phone,
-user_id: user.id,
-food: food,
-quantity: quantity,
-address: address,
-status: "new",
-payment: "pending"
-}
-])
-
-if(error){
-alert("Order failed: " + error.message)
-return
+if (selectedFood) {
+  document.getElementById("food").value = selectedFood;
 }
 
-alert("Order placed successfully!")
-window.location.href="my-orders.html"
+if (selectedQty) {
+  document.getElementById("quantity").value = selectedQty;
+}
 
-})
+// place order
+document.getElementById("orderForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
 
+  let user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    alert("Please login first");
+    window.location.href = "login.html";
+    return;
+  }
+
+  let profileName = localStorage.getItem("fullName") || "Customer";
+  let profilePhone = localStorage.getItem("phone") || "";
+
+  if (!profilePhone) {
+    alert("Please save your phone number in profile first");
+    window.location.href = "profile.html";
+    return;
+  }
+
+  let food = document.getElementById("food").value;
+  let quantity = document.getElementById("quantity").value;
+  let delivery = document.getElementById("delivery").value;
+  let address = document.getElementById("address").value;
+
+  let orderNumber = Math.floor(Math.random() * 9000) + 1000;
+
+  const { error } = await supabaseClient
+    .from("orders")
+    .insert([
+      {
+        order_no: orderNumber,
+        name: profileName,
+        phone: profilePhone,
+        user_id: user.id,
+        food: food,
+        quantity: quantity,
+        address: address,
+        delivery: delivery,
+        status: "new",
+        payment: "pending"
+      }
+    ]);
+
+  if (error) {
+    alert("Order failed: " + error.message);
+    return;
+  }
+
+  window.location.href = "my-orders.html";
+});
 </script>
 
 </body>
