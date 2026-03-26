@@ -766,3 +766,131 @@ cursor:not-allowed;
     gap: 8px;
   }
 }
+
+.dashboard-section {
+  padding: 20px;
+}
+
+.dashboard-section h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #111;
+}
+
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background: #111;
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.summary-card h3 {
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: #ff3b3b;
+}
+
+.dashboard-tools {
+  display: grid;
+  grid-template-columns: 1fr 180px 180px;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.dashboard-tools input,
+.dashboard-tools select {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.admin-order-card {
+  background: white;
+  padding: 18px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.order-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.order-top h3 {
+  color: #e53935;
+}
+
+.status-new,
+.status-ready,
+.payment-paid,
+.payment-pending {
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.status-new {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-ready {
+  background: #d4edda;
+  color: #155724;
+}
+
+.payment-paid {
+  color: green;
+  font-weight: bold;
+}
+
+.payment-pending {
+  color: orange;
+  font-weight: bold;
+}
+
+.order-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.order-actions button {
+  background: #ff3b3b;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.order-actions button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .dashboard-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .order-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
