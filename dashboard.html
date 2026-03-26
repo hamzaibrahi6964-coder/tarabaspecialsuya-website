@@ -39,7 +39,12 @@
   </div>
 
   <div class="dashboard-tools">
-    <input type="text" id="searchInput" placeholder="Search by name, food or phone" onkeyup="loadOrders()">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search by name, food or phone"
+      onkeyup="loadOrders()"
+    >
 
     <select id="statusFilter" onchange="loadOrders()">
       <option value="all">All Status</option>
@@ -60,116 +65,119 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-const supabaseClient = supabase.createClient(
-  "https://kjbebnahxuupolrcmlwv.supabase.co",
-  "YOUR_SUPABASE_ANON_KEY"
-)
+  const supabaseClient = supabase.createClient(
+    "https://kjbebnahxuupolrcmlwv.supabase.co",
+    "sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+  );
 
-async function loadOrders() {
-  let search = document.getElementById("searchInput").value.toLowerCase()
-  let statusFilter = document.getElementById("statusFilter").value
-  let paymentFilter = document.getElementById("paymentFilter").value
+  async function loadOrders() {
+    let search = document.getElementById("searchInput").value.toLowerCase();
+    let statusFilter = document.getElementById("statusFilter").value;
+    let paymentFilter = document.getElementById("paymentFilter").value;
 
-  const { data, error } = await supabaseClient
-    .from("orders")
-    .select("*")
-    .order("created_at", { ascending: false })
+    const { data, error } = await supabaseClient
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-  let container = document.getElementById("orders")
-  container.innerHTML = ""
+    let container = document.getElementById("orders");
+    container.innerHTML = "";
 
-  if (error) {
-    container.innerHTML = "<p>Failed to load orders</p>"
-    return
-  }
+    if (error) {
+      container.innerHTML = "<p>Failed to load orders: " + error.message + "</p>";
+      return;
+    }
 
-  let filteredOrders = data.filter(order => {
-    let matchesSearch =
-      (order.name && order.name.toLowerCase().includes(search)) ||
-      (order.food && order.food.toLowerCase().includes(search)) ||
-      (order.phone && order.phone.toLowerCase().includes(search))
+    let filteredOrders = data.filter(order => {
+      let name = order.name ? order.name.toLowerCase() : "";
+      let food = order.food ? order.food.toLowerCase() : "";
+      let phone = order.phone ? order.phone.toLowerCase() : "";
 
-    let matchesStatus = statusFilter === "all" || order.status === statusFilter
-    let matchesPayment = paymentFilter === "all" || order.payment === paymentFilter
+      let matchesSearch =
+        name.includes(search) ||
+        food.includes(search) ||
+        phone.includes(search);
 
-    return matchesSearch && matchesStatus && matchesPayment
-  })
+      let matchesStatus = statusFilter === "all" || order.status === statusFilter;
+      let matchesPayment = paymentFilter === "all" || order.payment === paymentFilter;
 
-  document.getElementById("totalOrders").innerText = data.length
-  document.getElementById("newOrders").innerText = data.filter(order => order.status === "new").length
-  document.getElementById("readyOrders").innerText = data.filter(order => order.status === "ready").length
-  document.getElementById("pendingPayments").innerText = data.filter(order => order.payment === "pending").length
+      return matchesSearch && matchesStatus && matchesPayment;
+    });
 
-  if (filteredOrders.length === 0) {
-    container.innerHTML = "<p>No orders found</p>"
-    return
-  }
+    document.getElementById("totalOrders").innerText = data.length;
+    document.getElementById("newOrders").innerText = data.filter(order => order.status === "new").length;
+    document.getElementById("readyOrders").innerText = data.filter(order => order.status === "ready").length;
+    document.getElementById("pendingPayments").innerText = data.filter(order => order.payment === "pending").length;
 
-  filteredOrders.forEach(order => {
-    let statusClass = order.status === "ready" ? "status-ready" : "status-new"
-    let paymentClass = order.payment === "paid" ? "payment-paid" : "payment-pending"
+    if (filteredOrders.length === 0) {
+      container.innerHTML = "<p>No orders found</p>";
+      return;
+    }
 
-    container.innerHTML += `
-      <div class="admin-order-card">
-        <div class="order-top">
-          <h3>Order #${order.order_no}</h3>
-          <span class="${statusClass}">${order.status}</span>
+    filteredOrders.forEach(order => {
+      let statusClass = order.status === "ready" ? "status-ready" : "status-new";
+      let paymentClass = order.payment === "paid" ? "payment-paid" : "payment-pending";
+
+      container.innerHTML += `
+        <div class="admin-order-card">
+          <div class="order-top">
+            <h3>Order #${order.order_no || "-"}</h3>
+            <span class="${statusClass}">${order.status || "new"}</span>
+          </div>
+
+          <p><b>Name:</b> ${order.name || "-"}</p>
+          <p><b>Phone:</b> ${order.phone || "-"}</p>
+          <p><b>Food:</b> ${order.food || "-"}</p>
+          <p><b>Quantity:</b> ${order.quantity || "-"}</p>
+          <p><b>Address:</b> ${order.address || "-"}</p>
+          <p><b>Payment:</b> <span class="${paymentClass}">${order.payment || "pending"}</span></p>
+          <p><b>Ordered:</b> ${order.created_at ? new Date(order.created_at).toLocaleString() : "-"}</p>
+          <p><b>Ready Time:</b> ${order.completed_at ? new Date(order.completed_at).toLocaleString() : "Not yet ready"}</p>
+
+          <div class="order-actions">
+            <button onclick="markAsReady('${order.id}')">Mark Ready</button>
+            <button onclick="markAsPaid('${order.id}')">Mark Paid</button>
+          </div>
         </div>
-
-        <p><b>Name:</b> ${order.name || "-"}</p>
-        <p><b>Phone:</b> ${order.phone || "-"}</p>
-        <p><b>Food:</b> ${order.food || "-"}</p>
-        <p><b>Quantity:</b> ${order.quantity || "-"}</p>
-        <p><b>Address:</b> ${order.address || "-"}</p>
-        <p><b>Payment:</b> <span class="${paymentClass}">${order.payment || "-"}</span></p>
-        <p><b>Ordered:</b> ${order.created_at ? new Date(order.created_at).toLocaleString() : "-"}</p>
-        <p><b>Ready Time:</b> ${order.completed_at ? new Date(order.completed_at).toLocaleString() : "Not yet ready"}</p>
-
-        <div class="order-actions">
-          <button onclick="markAsReady('${order.id}')">Mark Ready</button>
-          <button onclick="markAsPaid('${order.id}')">Mark Paid</button>
-        </div>
-      </div>
-    `
-  })
-}
-
-async function markAsReady(orderId) {
-  const { error } = await supabaseClient
-    .from("orders")
-    .update({
-      status: "ready",
-      completed_at: new Date().toISOString()
-    })
-    .eq("id", orderId)
-
-  if (error) {
-    alert("Failed to update order")
-    return
+      `;
+    });
   }
 
-  loadOrders()
-}
+  async function markAsReady(orderId) {
+    const { error } = await supabaseClient
+      .from("orders")
+      .update({
+        status: "ready",
+        completed_at: new Date().toISOString()
+      })
+      .eq("id", orderId);
 
-async function markAsPaid(orderId) {
-  const { error } = await supabaseClient
-    .from("orders")
-    .update({
-      payment: "paid"
-    })
-    .eq("id", orderId)
+    if (error) {
+      alert("Failed to update order: " + error.message);
+      return;
+    }
 
-  if (error) {
-    alert("Failed to update payment")
-    return
+    loadOrders();
   }
 
-  loadOrders()
-}
+  async function markAsPaid(orderId) {
+    const { error } = await supabaseClient
+      .from("orders")
+      .update({
+        payment: "paid"
+      })
+      .eq("id", orderId);
 
-loadOrders()
+    if (error) {
+      alert("Failed to update payment: " + error.message);
+      return;
+    }
 
-setInterval(loadOrders, 5000)
+    loadOrders();
+  }
+
+  loadOrders();
+  setInterval(loadOrders, 5000);
 </script>
 
 </body>
