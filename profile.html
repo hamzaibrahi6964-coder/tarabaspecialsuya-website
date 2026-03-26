@@ -1,120 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Profile</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+  <title>Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <nav>
-<a href="index.html" class="logo">
-Taraba <span>Special Suya</span>
-</a>
+  <a href="index.html" class="logo">
+    Taraba <span>Special Suya</span>
+  </a>
 
-<div class="menu-icon" onclick="openMenu()">☰</div>
+  <div class="menu-icon" onclick="openMenu()">☰</div>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
-<span onclick="closeMenu()" class="close-menu">✕</span>
+  <span onclick="closeMenu()" class="close-menu">✕</span>
 
-<a href="index.html">Home</a>
-<a href="menu.html">Menu</a>
-<a href="order.html">Order</a>
-<a href="my-orders.html">My Orders</a>
-<a href="profile.html">Profile</a>
-
+  <a href="index.html">Home</a>
+  <a href="menu.html">Menu</a>
+  <a href="order.html">Order</a>
+  <a href="my-orders.html">My Orders</a>
+  <a href="profile.html">Profile</a>
 </div>
 
 <section class="profile-section">
+  <div class="profile-card">
 
-<div class="profile-card">
+    <img id="profileImage" src="https://via.placeholder.com/120" class="profile-img">
 
-<img id="profileImage" src="https://via.placeholder.com/120" class="profile-img">
+    <input type="file" id="imageUpload">
 
-<input type="file" id="imageUpload">
+    <h2 id="userEmail"></h2>
 
-<h2 id="userEmail"></h2>
+    <input type="text" id="fullName" placeholder="Full Name">
 
-<input type="text" id="fullName" placeholder="Full Name">
+    <input type="text" id="phone" placeholder="Phone Number">
 
-<input type="text" id="phone" placeholder="Phone Number">
+    <button class="save-btn" onclick="saveProfile()">Save Profile</button>
 
-<button class="save-btn" onclick="saveProfile()">Save Profile</button>
+    <button class="logout-btn" onclick="logout()">Logout</button>
 
-<button class="logout-btn" onclick="logout()">Logout</button>
-
-</div>
-
+  </div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-
 const supabaseClient = supabase.createClient(
-"https://kjbebnahxuupolrcmlwv.supabase.co",
-"sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
-)
+  "https://kjbebnahxuupolrcmlwv.supabase.co",
+  "sb_publishable_2wbjQwggFVO4DkeZIULNoA_lpFniGZ_"
+);
 
-let user = JSON.parse(localStorage.getItem("user"))
+let user = JSON.parse(localStorage.getItem("user"));
 
-if(!user){
-alert("Please login first")
-window.location.href="login.html"
+if (!user) {
+  alert("Please login first");
+  window.location.href = "login.html";
 }
 
-async function loadProfile(){
-
-const { data, error } = await supabaseClient
-.from("profiles")
-.select("*")
-.eq("id", user.id)
-.single()
-
-if(data){
-document.getElementById("userEmail").innerText = data.email || user.email
-document.getElementById("fullName").value = data.full_name || ""
-document.getElementById("phone").value = data.phone || ""
+function openMenu() {
+  document.getElementById("mobileMenu").style.right = "0";
 }
 
+function closeMenu() {
+  document.getElementById("mobileMenu").style.right = "-260px";
 }
 
-loadProfile()
+async function loadProfile() {
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
+  document.getElementById("userEmail").innerText = user.email;
 
-async function saveProfile(){
+  if (data) {
+    document.getElementById("fullName").value = data.full_name || "";
+    document.getElementById("phone").value = data.phone || "";
 
-let name = document.getElementById("fullName").value
-let phone = document.getElementById("phone").value
-
-const { error } = await supabaseClient
-.from("profiles")
-.upsert([
-{
-id: user.id,
-email: user.email,
-full_name: name,
-phone: phone
-}
-])
-
-if(error){
-alert(error.message)
-return
+    localStorage.setItem("fullName", data.full_name || "");
+    localStorage.setItem("phone", data.phone || "");
+  } else {
+    document.getElementById("fullName").value = localStorage.getItem("fullName") || "";
+    document.getElementById("phone").value = localStorage.getItem("phone") || "";
+  }
 }
 
-alert("Profile saved successfully!")
+loadProfile();
 
+async function saveProfile() {
+  let name = document.getElementById("fullName").value.trim();
+  let phone = document.getElementById("phone").value.trim();
+
+  if (!name || !phone) {
+    alert("Please fill in your full name and phone number");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .upsert([
+      {
+        id: user.id,
+        email: user.email,
+        full_name: name,
+        phone: phone
+      }
+    ]);
+
+  if (error) {
+    alert("Failed to save profile: " + error.message);
+    return;
+  }
+
+  localStorage.setItem("fullName", name);
+  localStorage.setItem("phone", phone);
+
+  alert("Profile saved successfully!");
 }
 
-
-function logout(){
-localStorage.removeItem("user")
-window.location.href="login.html"
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
 }
 
+document.getElementById("imageUpload").addEventListener("change", function(e) {
+  let file = e.target.files[0];
+
+  if (file) {
+    let reader = new FileReader();
+
+    reader.onload = function() {
+      document.getElementById("profileImage").src = reader.result;
+      localStorage.setItem("profileImage", reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  }
+});
+
+let savedImage = localStorage.getItem("profileImage");
+if (savedImage) {
+  document.getElementById("profileImage").src = savedImage;
+}
 </script>
+
 </body>
 </html>
