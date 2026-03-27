@@ -23,25 +23,50 @@
   <a href="menu.html">Menu</a>
   <a href="order.html">Order</a>
   <a href="my-orders.html">My Orders</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="contact.html">Contact</a>
+  <a href="signup.html">Signup</a>
+  <a href="login.html">Login</a>
   <a href="profile.html">Profile</a>
 </div>
 
-<section class="profile-section">
-  <div class="profile-card">
+<section class="profile-page">
+  <div class="profile-wrapper">
 
-    <img id="profileImage" src="https://via.placeholder.com/120" class="profile-img">
+    <div class="profile-header-box">
+      <h1>My Profile</h1>
+      <p>Manage your account details and personal information</p>
+    </div>
 
-    <input type="file" id="imageUpload">
+    <div class="profile-card-pro">
+      <div class="profile-image-area">
+        <img id="profileImage" src="https://via.placeholder.com/140" class="profile-img-pro">
+        <label for="imageUpload" class="upload-btn">Upload Photo</label>
+        <input type="file" id="imageUpload" accept="image/*">
+      </div>
 
-    <h2 id="userEmail"></h2>
+      <div class="profile-info-area">
+        <div class="profile-email-box">
+          <span>Email Address</span>
+          <h2 id="userEmail">Loading...</h2>
+        </div>
 
-    <input type="text" id="fullName" placeholder="Full Name">
+        <div class="input-group">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" placeholder="Enter your full name">
+        </div>
 
-    <input type="text" id="phone" placeholder="Phone Number">
+        <div class="input-group">
+          <label for="phone">Phone Number</label>
+          <input type="text" id="phone" placeholder="Enter your phone number">
+        </div>
 
-    <button class="save-btn" onclick="saveProfile()">Save Profile</button>
-
-    <button class="logout-btn" onclick="logout()">Logout</button>
+        <div class="profile-actions">
+          <button class="save-btn-pro" onclick="saveProfile()">Save Profile</button>
+          <button class="logout-btn-pro" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
 
   </div>
 </section>
@@ -70,13 +95,13 @@ function closeMenu() {
 }
 
 async function loadProfile() {
+  document.getElementById("userEmail").innerText = user.email;
+
   const { data, error } = await supabaseClient
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
-
-  document.getElementById("userEmail").innerText = user.email;
 
   if (data) {
     document.getElementById("fullName").value = data.full_name || "";
